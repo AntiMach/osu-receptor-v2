@@ -1,5 +1,9 @@
 .vscode/
 .venv/
+source/**
+!source/skin\ templates\ go\ here
 build/
-source/
 __pycache__/
+*.exe
+*.spec
+*.zip

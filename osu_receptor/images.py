@@ -1,8 +1,8 @@
 from PIL import Image, ImageDraw, ImageOps
 
-import src.const as const
-from src.source import Source, Column
-from src.settings import Configuration
+import osu_receptor.const as const
+from osu_receptor.source import Source, Column
+from osu_receptor.settings import Configuration
 
 
 def make_blank():
@@ -23,9 +23,7 @@ def make_cover(width: int, height: int, pattern: list[Column]):
 
 
 class ImageBuilder:
-    def __init__(
-        self, source: Source, column: Column, configuration: Configuration
-    ) -> None:
+    def __init__(self, source: Source, column: Column, configuration: Configuration) -> None:
         self.skin = source
         self.token = column
         self.configuration = configuration
@@ -41,17 +39,17 @@ class ImageBuilder:
 
     def make(self, element: str):
         match element:
-            case const.NOTE, const.HEAD, const.BODY:
-                return self.make_note(element)
-
-            case const.KEYUP, const.KEYDOWN:
-                return self.make_key(element)
-
             case const.BODY if self.configuration.is_percy:
                 return self.make_percy()
 
             case const.TAIL:
                 return self.make_tail()
+
+            case const.KEYUP | const.KEYDOWN:
+                return self.make_key(element)
+
+            case const.NOTE | const.HEAD | const.BODY:
+                return self.make_note(element)
 
         raise ValueError(f"unexpected element for configuration: {element}")
 

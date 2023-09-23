@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from PIL import Image
 
-import src.const as const
+import osu_receptor.const as const
 
 
 class Column:
@@ -36,17 +36,11 @@ class Source:
         skin_layouts = skin_data["layouts"]
 
         self.default = Column(skin_columns.pop(const.DEFAULT))
-        self.columns: dict[str, Column] = {
-            name: self.default.override(data)
-            for name, data in skin_columns.items()
-        }
+        self.columns: dict[str, Column] = {name: self.default.override(data) for name, data in skin_columns.items()}
 
         self.images: dict[str, Image.Image] = {}
         self.layouts: dict[int, list[Column]] = {
-            len(pattern): [
-                self.columns.get(token, self.default) for token in pattern
-            ]
-            for pattern in skin_layouts
+            len(pattern): [self.columns.get(token, self.default) for token in pattern] for pattern in skin_layouts
         }
 
         self.register_images(self.default)
@@ -59,10 +53,7 @@ class Source:
 
     def open_images(self):
         try:
-            self.images = {
-                name: Image.open(self.directory / f"{name}.png")
-                for name in self.images
-            }
+            self.images = {name: Image.open(self.directory / f"{name}.png") for name in self.images}
         except Exception:
             self.close_images()
             raise

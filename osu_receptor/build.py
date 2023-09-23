@@ -1,10 +1,10 @@
 import shutil
 from pathlib import Path
 
-import src.const as const
-from src.settings import Settings
-from src.source import Source, Column
-from src.images import ImageBuilder, make_blank, make_cover
+import osu_receptor.const as const
+from osu_receptor.settings import Settings
+from osu_receptor.source import Source, Column
+from osu_receptor.images import ImageBuilder, make_blank, make_cover
 
 
 class SkinBuilder:
@@ -55,9 +55,7 @@ class SkinBuilder:
         key_settings = self.settings.configs[key_count]
         self.write_header(key_count)
 
-        self.write_entry(
-            "ColumnWidth", ",".join((str(key_settings.fullwidth),) * key_count)
-        )
+        self.write_entry("ColumnWidth", ",".join((str(key_settings.fullwidth),) * key_count))
         self.write_entry("HitPosition", const.HEIGHT - key_settings.hitpos)
 
         if key_settings.centered:
@@ -69,9 +67,7 @@ class SkinBuilder:
 
         if key_settings.cover:
             cover_name = f"cover_{key_count}"
-            make_cover(
-                key_settings.fullwidth, key_settings.cover, pattern
-            ).save(self.asset_path(cover_name))
+            make_cover(key_settings.fullwidth, key_settings.cover, pattern).save(self.asset_path(cover_name))
 
             self.images.add(cover_name)
             self.write_entry("StageBottom", self.ini_path(cover_name))
@@ -86,9 +82,7 @@ class SkinBuilder:
         for i, token in enumerate(pattern):
             self.write_line()
 
-            self.write_entry(
-                f"Colour{i+1}", ",".join(str(c) for c in token.color)
-            )
+            self.write_entry(f"Colour{i+1}", ",".join(str(c) for c in token.color))
 
             builder = ImageBuilder(self.skin, token, key_settings)
 
@@ -107,9 +101,7 @@ class SkinBuilder:
                     res = builder.make(element)
 
                     res.save(self.asset_path_2x(full_image_name))
-                    res.resize((res.width // 2, res.height // 2)).save(
-                        self.asset_path(full_image_name)
-                    )
+                    res.resize((res.width // 2, res.height // 2)).save(self.asset_path(full_image_name))
 
                 self.write_entry(
                     const.ELEMENT_MAP[element] % i,

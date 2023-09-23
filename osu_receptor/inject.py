@@ -2,7 +2,7 @@ import os
 import shutil
 from pathlib import Path
 
-import src.const as const
+import osu_receptor.const as const
 
 
 def overwrite_mania_sections(skin_ini: Path, new_data: str):
@@ -29,14 +29,7 @@ def get_osu_install():
     return Path(os.getenv("LOCALAPPDATA")) / const.OSU_SKIN_DIR
 
 
-def from_osu_install(skin_name: str):
-    return get_osu_install() / skin_name
-
-
-def inject_build_replace(build_name: str, skin_path: str):
-    build_dir = Path(const.BUILD_DIR) / build_name
-    skin_dir = Path(skin_path)
-
+def inject_build_replace(build_dir: Path, skin_dir: Path):
     build_ini = build_dir / const.SKIN_INI
     skin_ini = skin_dir / const.SKIN_INI
 

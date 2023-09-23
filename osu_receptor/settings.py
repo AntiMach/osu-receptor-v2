@@ -2,7 +2,7 @@ import json
 import dataclasses
 from pathlib import Path
 
-import src.const as const
+import osu_receptor.const as const
 
 
 @dataclasses.dataclass
@@ -39,9 +39,7 @@ class Settings:
         default = Configuration(name=const.DEFAULT, **data.pop(const.DEFAULT))
         names = {const.DEFAULT: default}
 
-        self.configs: dict[int, Configuration] = {
-            i: default for i in const.KEYS
-        }
+        self.configs: dict[int, Configuration] = {i: default for i in const.KEYS}
 
         for name, new in data.items():
             key_counts = new.pop("keys")
@@ -49,6 +47,4 @@ class Settings:
             for key_count in key_counts:
                 newname = f"{self.configs[key_count].name}_{name}"
 
-                self.configs[key_count] = names.setdefault(
-                    newname, self.configs[key_count].override(newname, new)
-                )
+                self.configs[key_count] = names.setdefault(newname, self.configs[key_count].override(newname, new))
