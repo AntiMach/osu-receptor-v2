@@ -1,8 +1,9 @@
+from pathlib import Path
 from PIL import Image, ImageDraw, ImageOps
 
 import osu_receptor.const as const
-from osu_receptor.source import Source, Column
-from osu_receptor.settings import Configuration
+from osu_receptor.settings import Layout
+from osu_receptor.skin import Skin, Column
 
 
 def make_blank():
@@ -23,23 +24,23 @@ def make_cover(width: int, height: int, pattern: list[Column]):
 
 
 class ImageBuilder:
-    def __init__(self, source: Source, column: Column, configuration: Configuration) -> None:
-        self.skin = source
-        self.token = column
-        self.configuration = configuration
+    def __init__(self, skin: Skin, column: Column, layout: Layout) -> None:
+        self.skin = skin
+        self.column = column
+        self.layout = layout
 
-    def image_name_of(self, element: str):
-        return self.token.elements[element]
+    def image_name_of(self, element: str) -> Path:
+        return self.column.elements[element]
 
-    def image_of(self, element: str):
+    def image_of(self, element: str) -> Image.Image | None:
         return self.skin.images[self.image_name_of(element)]
 
     def full_image_name(self, element: str):
-        return f"{self.image_name_of(element)}_{self.configuration.name}"
+        return f"{self.image_name_of(element).stem}_{self.layout.id}"
 
     def make(self, element: str):
         match element:
-            case const.BODY if self.configuration.is_percy:
+            case const.BODY if self.layout.is_percy:
                 return self.make_percy()
 
             case const.TAIL:
@@ -55,13 +56,15 @@ class ImageBuilder:
 
     def make_key(self, element: str, xoff=1, yoff=1):
         image = self.image_of(element)
-        partw = self.configuration.width * const.SCALE_FACTOR
+        assert image is not None, f"image for {element} does not exist"
+
+        partw = self.layout.width * const.SCALE_FACTOR
         parth = partw * image.height / image.width
         partw, parth = int(partw), int(parth)
         partimg = image.resize((partw, parth))
 
-        padx = int(xoff * self.configuration.spacing * const.SCALE_FACTOR)
-        pady = int(yoff * self.configuration.hitpos * const.SCALE_FACTOR)
+        padx = int(xoff * self.layout.spacing * const.SCALE_FACTOR)
+        pady = int(yoff * self.layout.hitpos * const.SCALE_FACTOR)
 
         return partimg.crop((-padx, -pady, partw + padx, parth + pady))
 
@@ -73,7 +76,7 @@ class ImageBuilder:
         res = self.make_note(const.TAIL)
         res = ImageOps.flip(res)
 
-        if not self.notetail:
+        if not self.column.notetail:
             res = res.crop((0, -res.height, res.width, res.height))
 
         return res
@@ -81,7 +84,7 @@ class ImageBuilder:
     def make_percy(self):
         body = self.make_note(const.BODY)
         tail = self.make_note(const.TAIL)
-        start_height = tail.height // 2 if self.token.notetail else tail.height
+        start_height = tail.height // 2 if self.column.notetail else tail.height
 
         result = Image.new("RGBA", (body.width, const.PERCY_HEIGHT), "#0000")
 

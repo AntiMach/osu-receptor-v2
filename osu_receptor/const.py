@@ -1,9 +1,9 @@
 OSU_SKIN_DIR = "osu!/Skins"
 SOURCE_DIR = "source"
 BUILD_DIR = "build"
-SKIN_JSON = "skin.json"
+SKIN_YAML = "skin.yaml"
 SKIN_INI = "skin.ini"
-SETTINGS_JSON = "settings.json"
+SETTINGS_YAML = "settings.yaml"
 ASSET_DIR = "mania"
 ASSET_LIST_FILE = "mania_assets.txt"
 

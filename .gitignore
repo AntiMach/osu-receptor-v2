@@ -1,7 +1,8 @@
 .vscode/
 .venv/
 source/**
-!source/skin\ templates\ go\ here
+!source/example
+!source/example/*
 build/
 __pycache__/
 *.exe

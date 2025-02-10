@@ -1,0 +1,31 @@
+# (REQUIRED) If the tail is a note or a cap
+notetail: true
+
+# (REQUIRED) Color of the column's background
+color: [0, 0, 0, 240]
+
+# (REQUIRED) Asset file names
+# {} is automatically replaced by 1, 2, 3, depending on the layout values
+keyup: keyup.png
+keydown: keydown.png
+note: note{}.png
+head: note{}.png
+body: body{}.png
+tail: body{}.png
+
+# overrides for specific layout values
+overrides:
+  4:
+    keyup: keydown.png
+
+# Column layouts
+layouts:
+  - 3
+  - 11
+  - 131
+  - 1221
+  - 12321
+  - 121121
+  - 1213121
+  - 12122121
+  - 121232121

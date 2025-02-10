@@ -25,8 +25,8 @@ def overwrite_mania_sections(skin_ini: Path, new_data: str):
         fp.write(new_data)
 
 
-def get_osu_install():
-    return Path(os.getenv("LOCALAPPDATA")) / const.OSU_SKIN_DIR
+def get_osu_install() -> Path:
+    return Path(os.getenv("LOCALAPPDATA", "")) / const.OSU_SKIN_DIR
 
 
 def inject_build_replace(build_dir: Path, skin_dir: Path):

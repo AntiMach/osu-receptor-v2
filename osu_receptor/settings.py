@@ -1,50 +1,53 @@
-import json
-import dataclasses
+from hashlib import md5
+import yaml
+from typing import Any
 from pathlib import Path
+from dataclasses import dataclass, field
 
 import osu_receptor.const as const
 
 
-@dataclasses.dataclass
-class Configuration:
-    name: str
+@dataclass
+class Layout:
     width: int
     spacing: int
     hitpos: int
-    percy_height: int
-    centered: list[int]
-    cover: int
-    template: dict[str, str]
+    centered: tuple[int, int] | None = None
+    cover: int | None = None
+    percy: int | None = None
+    template: dict[str, Any] = field(default_factory=dict)
 
     @property
-    def is_percy(self):
-        return self.percy_height > 0
+    def id(self):
+        id_base = (self.width, self.spacing, self.hitpos, self.cover, self.percy)
+        return md5(str(id_base).encode()).digest()[:4].hex()
 
     @property
     def fullwidth(self):
         return self.width + self.spacing * 2
 
-    def override(self, name, data: dict):
-        template = data.pop("template", {})
-        res = dataclasses.replace(self, name=name, **data)
-        res.template = {**res.template, **template}
-        return res
+    @property
+    def is_percy(self) -> bool:
+        return self.percy is not None and self.percy > 0
+
+    def update(self, items: dict[str, Any]):
+        self.template.update(items.get("template", {}))
+
+        for k, v in items.items():
+            if k != "template":
+                setattr(self, k, v)
 
 
 class Settings:
-    def __init__(self, file_path: str) -> None:
-        with Path(file_path).open("r") as fp:
-            data = json.load(fp)
+    layouts: dict[int, Layout]
 
-        default = Configuration(name=const.DEFAULT, **data.pop(const.DEFAULT))
-        names = {const.DEFAULT: default}
+    def __init__(self, file: Path | str):
+        with open(file, "r") as fp:
+            default = yaml.load(fp.read(), Loader=yaml.CLoader)
 
-        self.configs: dict[int, Configuration] = {i: default for i in const.KEYS}
+        overrides = default.pop("overrides", [])
+        self.layouts = {i: Layout(**default) for i in const.KEYS}
 
-        for name, new in data.items():
-            key_counts = new.pop("keys")
-
-            for key_count in key_counts:
-                newname = f"{self.configs[key_count].name}_{name}"
-
-                self.configs[key_count] = names.setdefault(newname, self.configs[key_count].override(newname, new))
+        for override in overrides:
+            for key in override.pop("keys"):
+                self.layouts[key].update(override)

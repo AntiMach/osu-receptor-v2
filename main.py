@@ -1,4 +1,4 @@
-from osu_receptor.__main__ import main
+from osu_receptor.main import main
 
 
 if __name__ == "__main__":

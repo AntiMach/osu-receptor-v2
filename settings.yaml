@@ -1,0 +1,49 @@
+# Most of the values presented are sizes in pixels relative to the SD resolution (640x480)
+
+# (REQUIRED) Column width (SD resolution pixels) (0-inf)
+width: 66
+
+# (REQUIRED) Spacing between each column (SD resolution pixels) (0-inf)
+spacing: 2
+
+# (REQUIRED) Hit position counting from below, not above like in skin.ini (SD resolution pixels) (0-480)
+hitpos: 60
+
+# (OPTIONAL) Screen resolution to center the notefield to
+centered: [1920, 1080]
+
+# (OPTIONAL) Height of the note cover (SD resolution pixels) (0-480)
+cover: 64
+
+# (OPTIONAL) Height of the percy long notes (0-inf)
+percy: 40000
+
+# (OPTIONAL) Fields to include in the skin.ini
+# null values are replaced with a blank png image
+template:
+  ScorePosition: 200
+  ComboPosition: 160
+  SpecialStyle: 0
+  UpsideDown: 0
+  JudgementLine: 0
+  KeysUnderNotes: 1
+  BarlineHeight: 0
+  ColourColumnLine: 0,0,0,0
+  Hit300g: null
+  StageHint: null
+  StageLight: null
+  LightingN: null
+  LightingL: null
+  Lighting: null
+  StageLeft: null
+  StageRight: null
+
+# (OPTIONAL) key specific overrides
+# has all of the same parameters as previously mentioned, but everything is optional
+overrides:
+  # (REQUIRED) the effected key counts
+  - keys: [6, 7, 8, 9]
+    width: 56
+
+  - keys: [10, 12, 14, 16, 18]
+    width: 50
